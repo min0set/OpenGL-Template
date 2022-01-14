@@ -9,6 +9,7 @@ in vec3 fPosition;
 in vec3 fLight;
 // Interpolated values from the vertex shaders
 in vec2 UV;
+flat in int outColor;
 
 // Values that stay constant for the whole mesh.
 //uniform sampler2D myTextureSampler;
@@ -21,7 +22,16 @@ void main()
   vec3 N = normalize(fNormal);
   
   //Material parameters
-  vec3 materialColor = vec3(0.0,0.5,0.3);
+  //vec3 materialColor = vec3(0.0,0.5,0.3);
+  vec3 materialColor;
+  //Material parameters
+  if(outColor == 1){
+    materialColor = vec3(0.5,0.1,0.1);
+  }else{
+    materialColor = vec3(0.5,0.5,0.0);
+  }
+
+
   float ka = 0.3;
   float ks = 0.2;
   float kd = 0.8;

@@ -21,9 +21,10 @@ glm::mat4 V;
 GLuint Projection_Matrix_ID;
 glm::mat4 P;
 GLuint Model_Matrix_ID;
-
+GLuint colorId;
 RenderingObject board;
 RenderingObject sphere;
+
 //RenderingObject obj3;
 
 bool xStop = false;

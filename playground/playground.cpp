@@ -50,8 +50,8 @@ int main(void)
     ballCenter = glm::vec3(0.3f, 0.1f, 0.4f);
     currentBallCenter = glm::vec3(0.3f, 0.1f, 0.407f);
     ballRadius = 0.07f;
-    ballPits.push_back(glm::vec3(-0.1f, -0.3f, 0.4f));//deep z is 0.5 bence 0.1
-    ballPits.push_back(glm::vec3(-0.7f, -0.6f, 0.4f));//bunlar 0.9du
+    ballPits.push_back(glm::vec3(-0.1f, -0.3f, 0.4f));
+    ballPits.push_back(glm::vec3(-0.7f, -0.6f, 0.4f));
     ballPits.push_back(glm::vec3(-0.5f, 0.6f,  0.4f));
     ballPits.push_back(glm::vec3( 0.8f, 0.5f,  0.4f));
     ballPits.push_back(glm::vec3( 0.4f, -0.7f, 0.4f));
@@ -166,10 +166,12 @@ void updateAnimationLoop()
     glUniformMatrix4fv(View_Matrix_ID, 1, GL_FALSE, &V[0][0]);
     glUniformMatrix4fv(Projection_Matrix_ID, 1, GL_FALSE, &P[0][0]);
     glUniformMatrix4fv(Model_Matrix_ID, 1, GL_FALSE, &board.M[0][0]);
+    glUniform1i(colorId, 0);
     board.DrawObject();
 
 
     glUniformMatrix4fv(Model_Matrix_ID, 1, GL_FALSE, &sphere.M[0][0]);
+    glUniform1i(colorId, 1);
     sphere.DrawObject();
 
 
@@ -251,36 +253,9 @@ void updateMovingObjectTransformation()
     {
         float distance = sqrt((currentBallPits[i].x - currentBallCenter.x) * (currentBallPits[i].x - currentBallCenter.x) + (currentBallPits[i].y - currentBallCenter.y) * (currentBallPits[i].y - currentBallCenter.y));
         if (!isBallinPit && distance <= 0.1 - ballRadius) {
-            zForce = -distance * 3.3f;//-0.1 / distance;            
+            zForce = -distance * 3.2f;//-0.1 / distance;            
             isBallinPit = true;
-        }
-        //if (currentBallPits[i].x > 0 && abs(currentBallCenter.x + ballRadius) >= currentBallPits[i].x) {
-        //    if (angleX > 0) {
-
-        //        xStop = true;
-        //    }
-        //    //std::cout << "index: " << i << " Wall X : " << currentBoardWalls[i].x << "   Wall Y : " << currentBoardWalls[i].y << "   Wall Z : " << currentBoardWalls[i].z << std::endl;
-        //}
-        //else if (currentBoardWalls[i].x < 0 && currentBallCenter.x - ballRadius <= currentBoardWalls[i].x) {
-        //    if (angleX < 0) {
-
-        //        xStop = true;
-        //    }
-        //    //std::cout << "index: " << i << " Wall X : " << currentBoardWalls[i].x << "   Wall Y : " << currentBoardWalls[i].y << "   Wall Z : " << currentBoardWalls[i].z << std::endl;
-        //}
-        //if (currentBoardWalls[i].y > 0 && currentBallCenter.y + ballRadius >= currentBoardWalls[i].y) {
-
-        //    if (angleY < 0) {
-        //        yStop = true;
-        //    }
-        //    //std::cout << "index: " << i << " Wall X : " << currentBoardWalls[i].x << "   Wall Y : " << currentBoardWalls[i].y << "   Wall Z : " << currentBoardWalls[i].z << std::endl;
-        //}
-        //else if (currentBoardWalls[i].y < 0 && currentBallCenter.y - ballRadius <= currentBoardWalls[i].y) {
-        //    if (angleY > 0) {
-        //        yStop = true;
-        //    }
-        //    //std::cout << "index: " << i << " Wall X : " << currentBoardWalls[i].x << "   Wall Y : " << currentBoardWalls[i].y << "   Wall Z : " << currentBoardWalls[i].z << std::endl;
-        //}
+        }       
 
     }
 
@@ -288,7 +263,12 @@ void updateMovingObjectTransformation()
         if(oldY_angle != 0.0f && (oldY_angle < 0 && angleY >= 0) || (oldY_angle > 0 && angleY <= 0))
         oldY_angle = angleY;
     }*/
-    
+    if (isBallinPit) {
+        gForce = (gForce*2) / 3;
+    }
+    else {
+        gForce = -0.01;
+    }
     
     if ( !yStop){// || !((oldY_angle >= 0 && angleY >= 0) || (oldY_angle < 0 && angleY < 0))) {
         //yStop = false;
@@ -301,13 +281,7 @@ void updateMovingObjectTransformation()
         //std::cout << gForceX << std::endl;
         //gForceZ += cos(angleX) * gForce;
     }
-    if (isBallinPit) {
-        /// <summary>
-        /// hesapla burayıı todo
-        /// </summary>
-        gForceX /= 10;
-        gForceY /= 10;
-    }
+    
    
     sphere.M = glm::translate(sphere.M, { gForceX, gForceY, zForce });
     //tempV4 = glm::vec4(currentBallCenter, 1.0);
@@ -380,7 +354,7 @@ bool initializeMVPTransformation()
     Model_Matrix_ID = glGetUniformLocation(programID, "M");
     Projection_Matrix_ID = glGetUniformLocation(programID, "P");
     View_Matrix_ID = glGetUniformLocation(programID, "V");
-
+    colorId = glGetUniformLocation(programID, "myColor");
     // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 10000.0f);
 

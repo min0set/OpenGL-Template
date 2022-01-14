@@ -8,14 +8,17 @@ layout(location = 2) in vec2 vertexUV;
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
+uniform int myColor;
 
 //Output variables
 out vec3 fNormal;
 out vec3 fPosition;
 out vec3 fLight;
 out vec2 UV;
+flat out int outColor;
 
 void main(){
+	outColor = myColor;
 	mat4 MV = V * M;
 	mat4 MVP = P * V * M;
 	//Transform position and normal to camera space fragment shader for lighting 
